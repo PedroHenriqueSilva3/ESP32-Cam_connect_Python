@@ -11,7 +11,7 @@ async def handle_esp_32(websocket):
         print("Esp32 desconectado")
 
 async def main():
-    async with websockets.serve(handle_esp_32, "192.168.0.5", 8765):
+    async with websockets.serve(handle_esp_32, "192.168.0.10", 8765):
         await asyncio.Future()
 
 asyncio.run(main())
