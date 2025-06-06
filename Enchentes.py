@@ -1,5 +1,9 @@
-import asyncio  # Pode ser útil para futuras funcionalidades assíncronas
-# from idlelib.mainmenu import menudefs  # Removido: não é necessário para este código
+"""
+Membros:
+João Marcelo Diniz Vespa : RM564038
+Gabriel Carvalho Simões da Silva : RM563169
+Pedro Henrique da Silva :  RM566235
+"""
 
 def cadastro():
     """
