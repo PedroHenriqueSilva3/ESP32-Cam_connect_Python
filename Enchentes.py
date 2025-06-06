@@ -1,63 +1,171 @@
-from idlelib.mainmenu import menudefs
+import asyncio  # Pode ser útil para futuras funcionalidades assíncronas
+# from idlelib.mainmenu import menudefs  # Removido: não é necessário para este código
 
-
-def Cadastro():
+def cadastro():
+    """
+    Realiza o cadastro do usuário, solicitando e-mail, senha e cidade com validação.
+    """
     print("Realize seu cadastro!")
-    email = input("Digite seu email: ")
-    senha = input("Digite uma senha: ")
-    loc = input("Digite sua cidade: ")
-    print("Cadastro feito com sucesso!")
-    Menu()
-def Menu():
+
     while True:
-        choose = int(input("O que deseja Realizar? \n 1 - Receber dicas em caso de enchente \n 2 - Verificar a probabilidade de chuva \n 3 - Verificar o nivel de agua e probabilidade de enchente \n 4 - Encerrar sistema"))
-        match choose:
-            case 1:
-                Dicas()
-            case 2:
-                Probabilidade()
-            case 3:
-                Nivel()
-            case 4:
+        email = input("Digite seu e-mail: ").strip()
+        if email:
+            break
+        else:
+            print("O e-mail não pode estar em branco.")
+
+    # Confirmação de senha com verificação
+    while True:
+        senha = input("Digite sua senha: ").strip()
+        senha1 = input("Confirme sua senha: ").strip()
+
+        if not senha or not senha1:
+            print("A senha não pode estar em branco.")
+        elif senha != senha1:
+            print("As senhas são diferentes. Tente novamente.")
+        else:
+            break
+
+    while True:
+        cidade = input("Digite sua cidade: ").strip()
+        if cidade:
+            break
+        else:
+            print("A cidade não pode estar em branco.")
+
+    print("Cadastro feito com sucesso!\n")
+    menu()
+
+
+def login():
+    """
+    Realiza o login do usuário com validação de entrada.
+    """
+    while True:
+        email = input("Digite seu e-mail: ").strip()
+        if email:
+            break
+        else:
+            print("O e-mail não pode estar em branco.")
+
+    while True:
+        senha = input("Digite sua senha: ").strip()
+        if senha:
+            break
+        else:
+            print("A senha não pode estar em branco.")
+
+    print("Login feito com sucesso!\n")
+    menu()
+
+
+def menu():
+    """
+    Apresenta o menu principal com opções funcionais.
+    """
+    while True:
+        print("\nO que deseja realizar?")
+        print("1 - Receber dicas em caso de enchente")
+        print("2 - Verificar a probabilidade de chuva")
+        print("3 - Verificar o nível de água e probabilidade de enchente")
+        print("4 - Encerrar sistema")
+
+        escolha = input("Digite a opção desejada: ")
+
+        match escolha:
+            case "1":
+                dicas()
+            case "2":
+                try:
+                    temp = float(input("Digite a temperatura em Celsius: "))
+                    umid = float(input("Digite a umidade do ar em %: "))
+                    vent = float(input("Digite a velocidade do vento em km/h: "))
+                    prob = probabilidade(temp, umid, vent)
+                    print(f"Com base nas informações, a probabilidade de chuva é de: {prob:.1f}%\n")
+                except ValueError:
+                    print("Erro: insira apenas valores numéricos válidos para temperatura, umidade e vento.\n")
+            case "3":
+                nivel()
+            case "4":
+                print("Sistema encerrado.")
                 break
             case _:
-                print("Opcao invalida escolha outra opcao")
+                print("Opção inválida. Escolha outra opção.\n")
 
-def Dicas():
-    print("Vou colocar depois")
+def dicas():
+    """
+    Apresenta dicas de segurança em caso de enchente.
+    """
+    print("⚠️ Em caso de enchente:")
+    print("- Evite contato com a água da enchente.")
+    print("- Desligue aparelhos elétricos e mantenha-se em local seguro e elevado.")
+    print("- Acompanhe boletins da Defesa Civil e prefeituras locais.\n")
 
-def Probabilidade():
-    temp = float(input("Digite o temperatura em Celsius: "))
-    umid = float(input("Digite a umidade do ar em %: "))
-    vent = float(input("Digite a velocidade do vento em km/h: "))
-
-    if temp < 18:
-        temp = 0
-    elif temp > 30:
-        temp = 24
+def probabilidade(t, u, v):
+    """
+    Calcula a probabilidade de chuva com base na temperatura (t),
+    umidade relativa do ar (u) e velocidade do vento (v).
+    """
+    # Ajuste da temperatura
+    if t < 18:
+        t = 0
+    elif t > 30:
+        t = 24
     else:
-        temp = (temp - 18) * 2
+        t = (t - 18) * 2
 
-    if vent < 5:
-        vent = 0
-    elif vent > 20:
-        vent = 30
+    # Ajuste da velocidade do vento
+    if v < 5:
+        v = 0
+    elif v > 20:
+        v = 30
     else:
-        vent = (vent - 5) * 2
+        v = (v - 5) * 2
 
-    probabilidade = (0.6 * umid) + (0.3 * temp) + (0.1 * vent)
-    print(f"Probabilidade de chuva: {probabilidade}")
+    # Cálculo da probabilidade
+    return (0.6 * u) + (0.3 * t) + (0.1 * v)
 
-def Nivel():
-    estado = int(input("Esta chovendo no momento? \n 1 - Sim  \n 2 - Nao"))
-    if estado == 1:
-        estado = int(input("Qual o nivel da chuva? \n 1 - Chuva fraca \n 2 - Chuva moderada \n 3 - Chuva forte"))
+def nivel():
+    """
+    Simula risco de enchente utilizando nível da água (utilizando sensores com arduino) e intesidade de chuva no momento. (valores fictícios)
+    """
+    try:
+        estado = int(input("Está chovendo no momento? \n1 - Sim\n2 - Não\nDigite: "))
         if estado == 1:
-            print("Analisando o nivel da agua do esgoto e rios proximos a sua localizacao a chance de enchente e proxima de 0%")
-        if estado == 2:
-            print("Analisando o nivel da agua do esgoto e rios proximos a sua localizacao a chance de enchente e aproximadamente 23%")
-        if estado == 3:
-            print("Analisando o nivel da agua do esgoto e rios proximos a sua localizacao a chance de enchente e aproximadamente 60%, fique atento")
-    if estado == 2:
-        print("Nao a risco de enchentes no momento")
-Cadastro()
+            intensidade = int(input("Qual o nível da chuva?\n1 - Chuva fraca\n2 - Chuva moderada\n3 - Chuva forte\nDigite: "))
+            match intensidade:
+                case 1:
+                    print("Chance de enchente próxima de 0%.\n")
+                case 2:
+                    print("Chance de enchente aproximadamente 23%.\n")
+                case 3:
+                    print("Chance de enchente aproximadamente 60%. Fique atento!\n")
+                case _:
+                    print("Opção inválida para nível de chuva.\n")
+        elif estado == 2:
+            print("Não há risco de enchentes no momento.\n")
+        else:
+            print("Opção inválida.\n")
+    except ValueError:
+        print("Erro: insira apenas números inteiros válidos.\n")
+
+def inicio():
+    """
+    Inicia o sistema oferecendo opções de cadastro ou login.
+    """
+    while True:
+        try:
+            escolha = int(input("1 - Cadastrar-se\n2 - Login\nDigite: "))
+            if escolha == 1:
+                cadastro()
+                break
+            elif escolha == 2:
+                login()
+                break
+            else:
+                print("Opção inválida. Escolha outra opção.")
+        except ValueError:
+            print("Erro: digite apenas 1 ou 2.")
+
+# Execução principal
+inicio()
